@@ -6,6 +6,7 @@ item_models_folder = "input/assets/mod/models/item/"
 block_loot_tables_folder = "input/data/mod/loot_tables/blocks/"
 item_tags_folder = "input/data/mod/tags/items/"
 block_tags_folder = "input/data/mod/tags/blocks/"
+recipes_folder = "input/data/mod/recipes/"
 
 tool_types = ["sword", "pickaxe", "shovel", "axe", "hoe"]
 armor_types = ["helmet", "chestplate", "leggings", "boots"]
@@ -18,6 +19,11 @@ metal_ores = ["ore"]
 forge_item_tags = ["ingot", "nugget"]
 forge_block_tags = ["storage_block"]
 forge_ore_block_tags = ["ore"]
+
+recipes_ingot = ["block", "nugget", "ingot_from_block", "ingot_from_nuggets"]
+recipe_ores = ["ingot", "ingot_from_blasting"]
+recipes_tools = ["axe", "hoe", "pickaxe", "shovel", "sword"]
+recipes_armor = ["helmet", "chestplate", "leggings", "boots", "nugget_from_blasting", "nugget_from_smelting"]
 
 
 def generate_block(modid, name, file_in):
@@ -100,6 +106,17 @@ def generate_tags(tag_name, resource_name, is_item, modid, tag_modid="forge"):
     file_out.joinpath(tag_name_split[len(tag_name_split) - 1] + ".json").write_text(tag_file)
 
 
+def generate_recipes(modid, name, recipes_in):
+    for recipe in recipes_in:
+        file_in = Path(recipes_folder + recipe + ".json").read_text()
+        file_in = file_in.replace("@", modid)
+        file_in = file_in.replace("$", name)
+
+        file_out = Path("/", "output", "data", modid, "recipes")
+        file_out.mkdir(exist_ok=True, parents=True)
+        file_out.joinpath(name + "_" + recipe + ".json").write_text(file_in)
+
+
 def generate_cube(modid, name):
     generate_block(modid, name, "block")
 
@@ -121,6 +138,8 @@ if __name__ == '__main__':
     factories_tag_item = []
     factories_tag_block = []
 
+    recipes = []
+
     if input("Set of Items/Blocks? (y/n): ").startswith("y"):
         print("Available Factories: tool, armor, mystical_world_tool, ore, metal\n")
         factories_in = input("Enter Factory names, separated by \" \": ")
@@ -128,18 +147,22 @@ if __name__ == '__main__':
         for factory in split_factories:
             if factory == "tool":
                 factories_item += tool_types
+                recipes += recipes_tools
             elif factory == "armor":
                 factories_item += armor_types
+                recipes += recipes_armor
             elif factory == "mystical_world_tool":
                 factories_item += mystical_world_tools
             elif factory == "ore":
                 factories_block += metal_ores
                 factories_tag_block += forge_ore_block_tags
+                recipes += recipe_ores
             elif factory == "metal":
                 factories_block += metal_blocks
                 factories_item += metal_items
                 factories_tag_block += forge_block_tags
                 factories_tag_item += forge_item_tags
+                recipes += recipes_ingot
 
         cont = "y"
         while cont.startswith("y") or cont.startswith("Y"):
@@ -155,6 +178,7 @@ if __name__ == '__main__':
             for factory_block_tag in factories_tag_block:
                 generate_tags(factory_block_tag + "s/" + name_in,
                               name_in + "_" + factory_block_tag, False, modid_in)
+            generate_recipes(modid_in, name_in, recipes)
             cont = input("Continue? (y/n): ")
 
     else:
