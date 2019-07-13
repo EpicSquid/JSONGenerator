@@ -93,7 +93,7 @@ def generate_tags(tag_name, resource_name, is_item, modid, tag_modid="forge"):
     tag_file = Path(
         (item_tags_folder if is_item else block_tags_folder) + ("item.json" if is_item else "block.json")).read_text()
     tag_file = tag_file.replace("@", modid)
-    tag_file = tag_file.replace("$", resource_name)
+    tag_file = tag_file.replace("$", resource_name.replace("_storage", ""))
 
     tag_name_split = tag_name.split("/")
 
@@ -156,12 +156,14 @@ if __name__ == '__main__':
             elif factory == "ore":
                 factories_block += metal_ores
                 factories_tag_block += forge_ore_block_tags
+                factories_tag_item += forge_ore_block_tags
                 recipes += recipe_ores
             elif factory == "metal":
                 factories_block += metal_blocks
                 factories_item += metal_items
                 factories_tag_block += forge_block_tags
                 factories_tag_item += forge_item_tags
+                factories_tag_item += forge_block_tags
                 recipes += recipes_ingot
 
         cont = "y"
