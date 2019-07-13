@@ -24,6 +24,7 @@ recipes_ingot = ["block", "nugget", "ingot_from_block", "ingot_from_nuggets"]
 recipe_ores = ["ingot", "ingot_from_blasting"]
 recipes_tools = ["axe", "hoe", "pickaxe", "shovel", "sword"]
 recipes_armor = ["helmet", "chestplate", "leggings", "boots", "nugget_from_blasting", "nugget_from_smelting"]
+recipes_mystical_world = ["knife"]
 
 
 def generate_block(modid, name, file_in):
@@ -153,6 +154,7 @@ if __name__ == '__main__':
                 recipes += recipes_armor
             elif factory == "mystical_world_tool":
                 factories_item += mystical_world_tools
+                recipes += recipes_mystical_world
             elif factory == "ore":
                 factories_block += metal_ores
                 factories_tag_block += forge_ore_block_tags
