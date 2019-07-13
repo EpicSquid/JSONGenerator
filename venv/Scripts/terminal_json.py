@@ -15,22 +15,22 @@ metal_items = ["ingot", "nugget"]
 metal_blocks = ["block"]
 metal_ores = ["ore"]
 
+forge_item_tags = ["ingot", "nugget"]
+forge_block_tags = ["storage_block"]
+forge_ore_block_tags = ["ore"]
 
-def generate_block(modid, name, file_in, forge_tags=False):
+
+def generate_block(modid, name, file_in):
     try:
         blockstate = Path(blockstates_folder + file_in + ".json").read_text()
         block_model = Path(block_models_folder + file_in + ".json").read_text()
         item_model = Path(item_models_folder + file_in + ".json").read_text()
         loot_table = Path(block_loot_tables_folder + file_in + ".json").read_text()
-        if forge_tags:
-            block_tags = Path(block_tags_folder + file_in + ".json").read_text()
     except FileNotFoundError:
         blockstate = Path(blockstates_folder + "block.json").read_text()
         block_model = Path(block_models_folder + "block.json").read_text()
         item_model = Path(item_models_folder + "block.json").read_text()
         loot_table = Path(block_loot_tables_folder + "block.json").read_text()
-        if forge_tags:
-            block_tags = Path(block_tags_folder + "block.json").read_text()
 
     blockstate = blockstate.replace("$", modid)
     blockstate = blockstate.replace("@", name)
@@ -40,9 +40,6 @@ def generate_block(modid, name, file_in, forge_tags=False):
     item_model = item_model.replace("@", name)
     loot_table = loot_table.replace("$", modid)
     loot_table = loot_table.replace("@", name)
-    if forge_tags:
-        block_tags = block_tags.replace("$", modid)
-        block_tags = block_tags.replace("@", name)
 
     file_out = file_in
     if file_out == "block":
@@ -54,39 +51,26 @@ def generate_block(modid, name, file_in, forge_tags=False):
     out_block_model = Path("/", "output", "assets", modid, "models", "block")
     out_item_model = Path("/", "output", "assets", modid, "models", "item")
     out_loot_table = Path("/", "output", "data", modid, "loot_tables", "blocks")
-    if forge_tags:
-        out_block_tags = Path("/", "output", "data", modid, "tags", "blocks")
 
     out_blockstate.mkdir(exist_ok=True, parents=True)
     out_block_model.mkdir(exist_ok=True, parents=True)
     out_item_model.mkdir(exist_ok=True, parents=True)
     out_loot_table.mkdir(exist_ok=True, parents=True)
-    if forge_tags:
-        out_block_tags.mkdir(exist_ok=True, parents=True)
 
     out_blockstate.joinpath(file_out).write_text(blockstate)
     out_block_model.joinpath(file_out).write_text(block_model)
     out_item_model.joinpath(file_out).write_text(item_model)
     out_loot_table.joinpath(file_out).write_text(loot_table)
-    if forge_tags:
-        out_block_tags.joinpath(file_out).write_text(block_tags)
 
 
-def generate_item(modid, name, file_in, forge_tags=False):
+def generate_item(modid, name, file_in):
     try:
         item_model = Path(item_models_folder + file_in + ".json").read_text()
-        if forge_tags:
-            item_tags = Path(item_tags_folder + file_in + ".json").read_text()
     except FileNotFoundError:
         item_model = Path(item_models_folder + "item.json").read_text()
-        if forge_tags:
-            item_tags = Path(item_tags_folder + "item.json").read_text()
 
     item_model = item_model.replace("$", modid)
     item_model = item_model.replace("@", name)
-    if forge_tags:
-        item_tags = item_tags.replace("$", modid)
-        item_tags = item_tags.replace("@", name)
 
     file_out = file_in
     if file_out == "item":
@@ -98,10 +82,22 @@ def generate_item(modid, name, file_in, forge_tags=False):
     out_item_model.mkdir(exist_ok=True, parents=True)
     out_item_model.joinpath(file_out).write_text(item_model)
 
-    if forge_tags:
-        out_item_tags = Path("/", "output", "data", modid, "tags", "items")
-        out_item_tags.mkdir(exist_ok=True, parents=True)
-        out_item_tags.joinpath(file_out).write_text(item_tags)
+
+def generate_tags(tag_name, resource_name, is_item, modid, tag_modid="forge"):
+    tag_file = Path(
+        (item_tags_folder if is_item else block_tags_folder) + ("item.json" if is_item else "block.json")).read_text()
+    tag_file = tag_file.replace("@", modid)
+    tag_file = tag_file.replace("$", resource_name)
+
+    tag_name_split = tag_name.split("/")
+
+    file_out = Path("/", "output", "data", tag_modid, "tags", "items" if is_item else "blocks")
+    for index, path in enumerate(tag_name_split):
+        if index < len(tag_name_split) - 1:
+            file_out = file_out.joinpath(path)
+
+    file_out.mkdir(exist_ok=True, parents=True)
+    file_out.joinpath(tag_name_split[len(tag_name_split) - 1] + ".json").write_text(tag_file)
 
 
 def generate_cube(modid, name):
@@ -122,6 +118,9 @@ if __name__ == '__main__':
     factories_item = []
     factories_block = []
 
+    factories_tag_item = []
+    factories_tag_block = []
+
     if input("Set of Items/Blocks? (y/n): ").startswith("y"):
         print("Available Factories: tool, armor, mystical_world_tool, ore, metal\n")
         factories_in = input("Enter Factory names, separated by \" \": ")
@@ -135,19 +134,27 @@ if __name__ == '__main__':
                 factories_item += mystical_world_tools
             elif factory == "ore":
                 factories_block += metal_ores
+                factories_tag_block += forge_ore_block_tags
             elif factory == "metal":
                 factories_block += metal_blocks
                 factories_item += metal_items
+                factories_tag_block += forge_block_tags
+                factories_tag_item += forge_item_tags
 
         cont = "y"
         while cont.startswith("y") or cont.startswith("Y"):
             name_in = input("Enter Item/Block Name: ")
             for factory_item in factories_item:
-                generate_item(modid_in, name_in + "_" + factory_item, factory_item,
-                              forge_tags=(factory_item == "ingot" or factory_item == "nugget"))
+                generate_item(modid_in, name_in + "_" + factory_item, factory_item)
             for factory_block in factories_block:
-                generate_block(modid_in, name_in + "_" + factory_block, factory_block,
-                               forge_tags=(factory_block == "block" or factory_block == "ore"))
+                generate_block(modid_in, name_in + "_" + factory_block, factory_block)
+
+            for factory_item_tag in factories_tag_item:
+                generate_tags(factory_item_tag + "s/" + name_in,
+                              name_in + "_" + factory_item_tag, True, modid_in)
+            for factory_block_tag in factories_tag_block:
+                generate_tags(factory_block_tag + "s/" + name_in,
+                              name_in + "_" + factory_block_tag, False, modid_in)
             cont = input("Continue? (y/n): ")
 
     else:
