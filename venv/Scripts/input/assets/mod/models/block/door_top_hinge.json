@@ -1,0 +1,7 @@
+{
+    "parent": "block/door_top_rh",
+    "textures": {
+        "bottom": "$:blocks/@_door_bottom",
+        "top": "$:blocks/@_door_top"
+    }
+}

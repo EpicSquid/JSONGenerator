@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "$:block/@_slab" },
+        "type=top": { "model": "$:block/@_slab_top" },
+        "type=double": { "model": "$:block/@_planks" }
+    }
+}
