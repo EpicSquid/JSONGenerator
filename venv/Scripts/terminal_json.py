@@ -16,8 +16,9 @@ metal_items = ["ingot", "nugget"]
 metal_blocks = ["block"]
 metal_ores = ["ore"]
 
-forge_item_tags = ["ingot", "nugget"]
-forge_block_tags = ["storage_block"]
+forge_metal_item_tags = ["ingot", "nugget"]
+forge_metal_block_tags = ["storage_block"]
+forge_gem_item_tags = ["gem"]
 forge_ore_block_tags = ["ore"]
 
 recipes_ingot = ["block", "nugget", "ingot_from_block", "ingot_from_nuggets"]
@@ -163,9 +164,9 @@ if __name__ == '__main__':
             elif factory == "metal":
                 factories_block += metal_blocks
                 factories_item += metal_items
-                factories_tag_block += forge_block_tags
-                factories_tag_item += forge_item_tags
-                factories_tag_item += forge_block_tags
+                factories_tag_block += forge_metal_block_tags
+                factories_tag_item += forge_metal_item_tags
+                factories_tag_item += forge_metal_block_tags
                 recipes += recipes_ingot
 
         cont = "y"

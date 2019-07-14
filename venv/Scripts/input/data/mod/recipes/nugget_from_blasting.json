@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": [
+    {
+      "item": "@:$_pickaxe"
+    },
+    {
+      "item": "@:$_shovel"
+    },
+    {
+      "item": "@:$_axe"
+    },
+    {
+      "item": "@:$_hoe"
+    },
+    {
+      "item": "@:$_sword"
+    },
+    {
+      "item": "@:$_helmet"
+    },
+    {
+      "item": "@:$_chestplate"
+    },
+    {
+      "item": "@:$_leggings"
+    },
+    {
+      "item": "@:$_boots"
+    }
+  ],
+  "result": "@:$_nugget",
+  "experience": 0.1,
+  "cookingtime": 100
+}
