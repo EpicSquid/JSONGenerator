@@ -12,7 +12,7 @@ tool_types = ["sword", "pickaxe", "shovel", "axe", "hoe"]
 armor_types = ["helmet", "chestplate", "leggings", "boots"]
 
 mystical_world_tools = ["knife"]
-metal_items = ["ingot", "nugget"]
+metal_items = ["ingot", "nugget", "dust"]
 metal_blocks = ["block"]
 metal_ores = ["ore"]
 
