@@ -16,7 +16,7 @@ metal_items = ["ingot", "nugget", "dust"]
 metal_blocks = ["block"]
 metal_ores = ["ore"]
 
-forge_metal_item_tags = ["ingot", "nugget"]
+forge_metal_item_tags = ["ingot", "nugget", "dust"]
 forge_metal_block_tags = ["storage_block"]
 forge_gem_item_tags = ["gem"]
 forge_ore_block_tags = ["ore"]
